@@ -2,5 +2,4 @@ getgenv().Games = {
     [90192874177359] = "https://raw.githubusercontent.com/FUNNYSADCAT/Null-hub-new/refs/heads/main/Null%20hub", -- Old Toilet Tower Defense
     [118688242561353] = "https://raw.githubusercontent.com/FUNNYSADCAT/Null-get-free-unit-oldttd/refs/heads/main/Null%20hub%20lobby", -- Old Toilet Tower Defense lobby
     [18326509492] = "https://raw.githubusercontent.com/FUNNYSADCAT/Null-hub-ks/refs/heads/main/Kill%20stack%20sword", -- Killstreak Swords V4
-    [76992618628676] = "https://raw.githubusercontent.com/FUNNYSADCAT/NullHub-etd-auto-farm/refs/heads/main/NullHub%20etd%20auto%20farm", -- etd
 }
