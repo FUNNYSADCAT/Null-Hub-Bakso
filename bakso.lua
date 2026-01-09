@@ -48,7 +48,7 @@ function HlAnom()
       end
     end
     for _, hll in pairs(model:GetChildren()) do
-      if model:IsA("Model") then
+      if hll:IsA("Model") then
         local hl = Model:FindFirstChild("Hl")
         if hl then
           hl:Destroy()
