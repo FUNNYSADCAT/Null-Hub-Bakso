@@ -6,56 +6,70 @@ local workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
--- Variable
+-- Variables
 _G.FindAnom = false
 _G.NoCdInterect = false
 
-function HlAnom()
-  pcall(function()
-    while _G.FindAnom do task.wait(0.2)
-      for i,model in pairs(workspace:GetChildren()) do
-        if model:IsA("Model") and string.find("NPC") then
-          local hl = Model:FindFirstChild("Hl")
+local highlights = {}
 
-          if not hl then
+local function createOrUpdateHighlight(model, fillColor)
+    local hl = model:FindFirstChild("Hl")
+    if not hl then
+        hl = Instance.new("Highlight")
+        hl.Name = "Hl"
+        hl.OutlineColor = Color3.fromRGB(0, 0, 0)
+        hl.FillColor = fillColor
+        hl.Parent = model
+        table.insert(highlights, hl)  -- เก็บไว้ลบทีหลัง
+    else
+        hl.FillColor = fillColor
+    end
+    hl.Enabled = true
+end
 
-            hl = Instance.new("Highlight")
-            hl.Name = "Hl"
-            hl.OutlineColor = Color3.fromRGB(0, 0, 0)
-            hl.Parent = model
-          end
+local function clearAllHighlights()
+    for _, hl in ipairs(highlights) do
+        if hl and hl.Parent then
+            hl:Destroy()
+        end
+    end
+    highlights = {}
+end
 
-            hl.FillColor = Color3.fromRGB(0,255,0)
-            hl.Enabled = true
-        elseif model:IsA("Model") and not string.find("NPC") then
-          for i,anom in pairs(model:GetChildren()) do
-            if anom:IsA("Humanoid") or anom.Name == "HumanoidRootPart" then
-              local hl = Model:FindFirstChild("Hl")
+local function isNPC(model)
+    if not model:IsA("Model") then return false end
+    local name = model.Name
+    return string.find(string.lower(name), "npc") ~= nil
+end
 
-              if not hl then
-    
-                hl = Instance.new("Highlight")
-                hl.Name = "Hl"
-                hl.OutlineColor = Color3.fromRGB(0, 0, 0)
-                hl.Parent = model
-              end
+local function hasHumanoidParts(model)
+    if not model:IsA("Model") then return false end
+    for _, child in pairs(model:GetChildren()) do
+        if child:IsA("Humanoid") or child.Name == "HumanoidRootPart" then
+            return true
+        end
+    end
+    return false
+end
 
-                hl.FillColor = Color3.fromRGB(255,0,0)
-                hl.Enabled = true
+local function highlightAnomalies()
+    pcall(function()
+        while _G.FindAnom do
+            task.wait(0.2)
+            clearAllHighlights()
+
+            for _, model in pairs(Workspace:GetChildren()) do
+                if model:IsA("Model") then
+                    if isNPC(model) then
+                        createOrUpdateHighlight(model, Color3.fromRGB(0, 255, 0))
+                    elseif hasHumanoidParts(model) then
+                        createOrUpdateHighlight(model, Color3.fromRGB(255, 0, 0))
+                    end
+                end
             end
-          end
         end
-      end
-    end
-    for _, hll in pairs(model:GetChildren()) do
-      if hll:IsA("Model") then
-        local hl = hll:FindFirstChild("Hl")
-        if hl then
-          hl:Destroy()
-        end
-      end
-    end
-  end)
+        clearAllHighlights()
+    end)
 end
 
 function InstantInterect()
@@ -186,7 +200,7 @@ do
     EspAnom:OnChanged(function()
         if EspAnom.Value then
           _G.FindAnom = true
-          HlAnom()
+          spawn(highlightAnomalies)
         elseif not EspAnom.Value then
           _G.FindAnom = false
         end
