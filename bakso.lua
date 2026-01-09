@@ -45,7 +45,7 @@ end
 local function hasHumanoidParts(model)
     if not model:IsA("Model") then return false end
     for _, child in pairs(model:GetChildren()) do
-        if child:IsA("Humanoid") or child.Name == "HumanoidRootPart" then
+        if child:IsA("Humanoid") or child.Name == "HumanoidRootPart" and not isNPC(model) then
             return true
         end
     end
